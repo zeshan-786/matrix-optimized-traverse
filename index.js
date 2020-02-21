@@ -34,8 +34,8 @@ function findPaths(mat, path, i, j) {
 var pathObj = [];
 // Matrix to pass
 let mat = [
-  [1, 1, 1],
-  [1, 1, 1],
+  [1, -1, 1],
+  [-1, 1, 1],
   [1, 1, 1]
 ];
 
@@ -56,6 +56,9 @@ let totalScore = 0
 // Path for going to airport
 let goingPath 
 
+
+console.log(pathObj);
+
 // Remove restricted paths
 removeResitrictedPaths()
 
@@ -73,23 +76,46 @@ console.log("Totel Riders: ",totalScore);
 function goingScore(){
 	getGoingScore()
 	console.log(pathScore);
-	totalScore = Math.max(...pathScore)
+	if (pathObj.indexOf(goingPath)!== -1) 
+		totalScore = Math.max(...pathScore)
 	console.log("Riders While Going: ", totalScore);
 	goingPath = pathScore.indexOf(Math.max(...pathScore))
 	let elm =pathObj[goingPath]
+	if (pathObj.indexOf(goingPath)!== -1) 
 	for (const v of elm) {
 		v.value = 0
 	}
-	pathObj[pathScore.indexOf(Math.max(...pathScore))] = elm
+	if (pathObj !== []) {
+		pathObj[pathScore.indexOf(Math.max(...pathScore))] = elm	
+	}
+	// Removing Overlaping paths
+	removeOverlapingPaths()
+	console.log(pathObj);
+}
+
+function removeOverlapingPaths() {
+	pathObj = pathObj.filter(function(value, index, arr){
+		let flag = true 
+		let elm =pathObj[goingPath]
+		for (let i = 1; i < value.length-1 ; i++) {
+			let node = value[i]
+			for (let j = 1; j < elm.length-1 ; j++) {
+					let elmNode = elm[j]
+				if (node.row === elmNode.row && node.col === elmNode.col ) 
+					flag = false 
+			}
+		}
+		return flag
+	});
 }
 
 
 function backScore(){
 	pathScore = []
 	getBackScore()
-	console.log(pathScore);
-	totalScore += Math.max(...pathScore)
-	console.log("Riders While comming Back: ", Math.max(...pathScore));
+	if (pathScore.indexOf(1)!== -1) 
+		totalScore += Math.max(...pathScore)
+	console.log("Riders While comming Back: ", totalScore);
 }
 
 // Pick riders while going to airport
